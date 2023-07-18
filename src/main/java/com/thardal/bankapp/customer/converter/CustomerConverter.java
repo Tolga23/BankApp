@@ -10,6 +10,8 @@ import java.util.List;
 @Service
 public class CustomerConverter {
     public List<CustomerDto> convertToCustomerDtoList(List<Customer> customerList) {
+        if(customerList == null) return null;
+
         List<CustomerDto> customerDtoList = new ArrayList<>();
         for (Customer customer : customerList) {
             CustomerDto customerDto = convertToCustomerDto(customer);
@@ -20,6 +22,8 @@ public class CustomerConverter {
     }
 
     public CustomerDto convertToCustomerDto(Customer customer) {
+        if(customer == null) return null;
+
         CustomerDto customerDto = new CustomerDto();
         customerDto.setId(customer.getId());
         customerDto.setName(customer.getName());

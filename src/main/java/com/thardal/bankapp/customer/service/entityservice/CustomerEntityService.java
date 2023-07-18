@@ -1,6 +1,7 @@
 package com.thardal.bankapp.customer.service.entityservice;
 
 import com.thardal.bankapp.customer.dao.CustomerDao;
+import com.thardal.bankapp.customer.dto.CustomerUpdateRequestDto;
 import com.thardal.bankapp.customer.entity.Customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,5 +23,19 @@ public class CustomerEntityService {
         return customerDao.findById(id);
     }
 
+    public Customer save(Customer customer){
+        return customerDao.save(customer);
+    }
 
+    public void delete(Customer customer) {
+        customerDao.delete(customer);
+    }
+
+    public Customer update(Customer customer) {
+        return customerDao.save(customer);
+    }
+
+    public boolean existsById(Long id){
+        return customerDao.existsById(id);
+    }
 }
