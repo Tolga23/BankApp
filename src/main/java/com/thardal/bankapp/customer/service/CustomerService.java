@@ -8,6 +8,7 @@ import com.thardal.bankapp.customer.dto.CustomerUpdateRequestDto;
 import com.thardal.bankapp.customer.entity.Customer;
 import com.thardal.bankapp.customer.enums.CustomerErrorMessages;
 import com.thardal.bankapp.customer.service.entityservice.CustomerEntityService;
+import com.thardal.bankapp.global.enums.GlobalErrorMessages;
 import com.thardal.bankapp.global.exceptions.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,29 +42,18 @@ public class CustomerService {
     }
 
     public void delete(Long id) {
-        Customer customerById = getCustomerByIdWithControl(id);
+        Customer customerById = customerEntityService.getByIdWithControl(id);
 
         customerEntityService.delete(customerById);
     }
 
     public CustomerDto findById(Long id) {
-        Customer customer = getCustomerByIdWithControl(id);
+        Customer customer = customerEntityService.getByIdWithControl(id);
 
         CustomerDto customerDto = CustomerMapper.INSTANCE.convertToCustomerDto(customer);
         return customerDto;
     }
 
-    public Customer getCustomerByIdWithControl(Long id) {
-        Optional<Customer> byIdOptional = customerEntityService.findById(id);
-
-        Customer customer;
-        if (byIdOptional.isPresent()) {
-            customer = byIdOptional.get();
-        } else {
-            throw new ItemNotFoundException(CustomerErrorMessages.CUSTOMER_ERROR_MESSAGES);
-        }
-        return customer;
-    }
 
     public CustomerDto update(CustomerUpdateRequestDto customerUpdateRequestDto) {
 
@@ -79,7 +69,7 @@ public class CustomerService {
 
     private void isCustomerExisted(CustomerUpdateRequestDto customerUpdateRequestDto) {
         Long id = customerUpdateRequestDto.getId();
-        boolean isCustomerExisted = customerEntityService.existsById(id);
+        boolean isCustomerExisted = customerEntityService.existedById(id);
 
         if (!isCustomerExisted) throw new ItemNotFoundException(CustomerErrorMessages.CUSTOMER_ERROR_MESSAGES);
     }
