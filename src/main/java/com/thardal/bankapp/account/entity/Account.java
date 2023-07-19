@@ -2,6 +2,7 @@ package com.thardal.bankapp.account.entity;
 
 import com.thardal.bankapp.account.enums.AccountCurrencyType;
 import com.thardal.bankapp.account.enums.AccountType;
+import com.thardal.bankapp.global.enums.GlobalStatusType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -34,7 +35,8 @@ public class Account {
     @Column(name = "ACCOUNT_TYPE", length = 30)
     private AccountType accountType;
 
-
-
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS_TYPE", length = 30)
+    private GlobalStatusType statusType;
 
 }
