@@ -33,5 +33,5 @@ public class AccountMoneyTransfer {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "MONEY_TRANSFER_TYPE", length = 30)
-    private AcccountMoneyTransferType acccountMoneyTransferType;
+    private AcccountMoneyTransferType transferType;
 }
