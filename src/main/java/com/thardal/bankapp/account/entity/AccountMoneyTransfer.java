@@ -1,6 +1,7 @@
 package com.thardal.bankapp.account.entity;
 
 import com.thardal.bankapp.account.enums.AcccountMoneyTransferType;
+import com.thardal.bankapp.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "ACCOUNT_MONEY_TRANSFER")
 @Data
-public class AccountMoneyTransfer {
+public class AccountMoneyTransfer extends BaseEntity {
 
     @Id
     @SequenceGenerator(name = "AccountMoneyTransfer", sequenceName = "MONEY_TRANSFER_ID_SEQ")

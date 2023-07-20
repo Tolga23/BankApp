@@ -2,6 +2,7 @@ package com.thardal.bankapp.account.entity;
 
 import com.thardal.bankapp.account.enums.AccountCurrencyType;
 import com.thardal.bankapp.account.enums.AccountType;
+import com.thardal.bankapp.global.entity.BaseEntity;
 import com.thardal.bankapp.global.enums.GlobalStatusType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "ACCOUNT")
 @Data
-public class Account {
+public class Account extends BaseEntity {
 
     @Id
     @SequenceGenerator(name = "Account", sequenceName = "ACCOUNT_ID_SEQ")

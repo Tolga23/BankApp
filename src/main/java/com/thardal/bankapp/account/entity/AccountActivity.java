@@ -1,6 +1,7 @@
 package com.thardal.bankapp.account.entity;
 
 import com.thardal.bankapp.account.enums.AccountActivityType;
+import com.thardal.bankapp.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "ACCOUNT_ACTIVITY")
 @Data
-public class AccountActivity {
+public class AccountActivity extends BaseEntity {
 
     @Id
     @SequenceGenerator(name = "AccountActivity", sequenceName = "ACCOUNT_ACTIVITY_ID_SEQ")

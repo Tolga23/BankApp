@@ -1,12 +1,13 @@
 package com.thardal.bankapp.customer.entity;
 
+import com.thardal.bankapp.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Table(name = "CUSTOMER")
 @Data
-public class Customer {
+public class Customer extends BaseEntity {
 
     @Id
     @SequenceGenerator(name = "Customer", sequenceName = "CUSTOMER_ID_SEQ")
