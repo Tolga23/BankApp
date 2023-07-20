@@ -35,6 +35,7 @@ public class AccountService {
 
     public AccountDto save(AccountSaveRequestDto accountSaveRequestDto) {
         Account account = AccountMapper.INSTANCE.convertToAccountSave(accountSaveRequestDto);
+        account.setStatusType(GlobalStatusType.ACTIVE);
         account = accountEntityService.save(account);
 
         AccountDto accountDto = AccountMapper.INSTANCE.convertToAccountDto(account);
