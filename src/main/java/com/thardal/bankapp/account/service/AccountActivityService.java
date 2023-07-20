@@ -6,8 +6,10 @@ import com.thardal.bankapp.account.dto.AccountMoneyActivityDto;
 import com.thardal.bankapp.account.entity.Account;
 import com.thardal.bankapp.account.entity.AccountActivity;
 import com.thardal.bankapp.account.enums.AccountActivityType;
+import com.thardal.bankapp.account.enums.AccountErrorMessage;
 import com.thardal.bankapp.account.service.entityservice.AccountActivityEntityService;
 import com.thardal.bankapp.account.service.entityservice.AccountEntityService;
+import com.thardal.bankapp.global.exceptions.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +65,7 @@ public class AccountActivityService {
     }
 
     private static void validateBalance(BigDecimal remainingBalance) {
-        if (remainingBalance.compareTo(BigDecimal.ZERO) < 0) throw new RuntimeException("Insufficient Balance!");
+        if (remainingBalance.compareTo(BigDecimal.ZERO) < 0) throw new BusinessException(AccountErrorMessage.INSUFFICIENT_BALANCE);
     }
 
     private void updateCurrentBalance(Account account, BigDecimal remainingBalance) {

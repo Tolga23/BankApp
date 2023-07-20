@@ -9,6 +9,7 @@ import com.thardal.bankapp.customer.entity.Customer;
 import com.thardal.bankapp.customer.enums.CustomerErrorMessages;
 import com.thardal.bankapp.customer.service.entityservice.CustomerEntityService;
 import com.thardal.bankapp.global.enums.GlobalErrorMessages;
+import com.thardal.bankapp.global.exceptions.BusinessException;
 import com.thardal.bankapp.global.exceptions.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,6 @@ public class CustomerService {
         Long id = customerUpdateRequestDto.getId();
         boolean isCustomerExisted = customerEntityService.existedById(id);
 
-        if (!isCustomerExisted) throw new ItemNotFoundException(CustomerErrorMessages.CUSTOMER_ERROR_MESSAGES);
+        if (!isCustomerExisted) throw new BusinessException(CustomerErrorMessages.CUSTOMER_ERROR_MESSAGES);
     }
 }

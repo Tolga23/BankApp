@@ -1,5 +1,6 @@
 package com.thardal.bankapp.global.exception;
 
+import com.thardal.bankapp.global.exceptions.BusinessException;
 import com.thardal.bankapp.global.exceptions.ItemNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +37,11 @@ public class GlobalCustomExceptionHandler extends ResponseEntityExceptionHandler
     public ResponseEntity<String> handleException(Exception ex) {
         String errorMessage = "An unexpected error occurred: " + ex.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<String> handleBusinessException(BusinessException ex) {
+        String errorMessage = "An business error occurred: " + ex.getBaseErrorMessages().getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 }
