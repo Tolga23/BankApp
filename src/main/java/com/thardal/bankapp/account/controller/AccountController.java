@@ -4,6 +4,7 @@ import com.thardal.bankapp.account.dto.*;
 import com.thardal.bankapp.account.service.AccountActivityService;
 import com.thardal.bankapp.account.service.AccountService;
 import com.thardal.bankapp.account.service.MoneyTransferService;
+import com.thardal.bankapp.global.dto.RestResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,49 +22,49 @@ public class AccountController {
     public ResponseEntity findAll(){
         List<AccountDto> accountDtoList = accountService.findAll();
 
-        return ResponseEntity.ok(accountDtoList);
+        return ResponseEntity.ok(RestResponse.of(accountDtoList));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity findById(@PathVariable Long id){
         AccountDto accountDto = accountService.findById(id);
 
-        return ResponseEntity.ok(accountDto);
+        return ResponseEntity.ok(RestResponse.of(accountDto));
     }
 
     @PostMapping
     public ResponseEntity save(@RequestBody AccountSaveRequestDto accountSaveRequestDto) {
         AccountDto accountDto = accountService.save(accountSaveRequestDto);
 
-        return ResponseEntity.ok(accountDto);
+        return ResponseEntity.ok(RestResponse.of(accountDto));
     }
 
     @PatchMapping("/cancel/{accountId}")
     public ResponseEntity cancel(@PathVariable Long accountId){
         accountService.cancel(accountId);
 
-        return ResponseEntity.ok(Void.TYPE);
+        return ResponseEntity.ok(RestResponse.empty());
     }
 
     @PostMapping("/money-transfer")
     public ResponseEntity transferMoney(@RequestBody MoneyTransferSaveRequestDto moneyTransferSaveRequestDto) {
         MoneyTransferDto moneyTransferDto = moneyTransferService.transferMoney(moneyTransferSaveRequestDto);
 
-        return ResponseEntity.ok(moneyTransferDto);
+        return ResponseEntity.ok(RestResponse.of(moneyTransferDto));
     }
 
     @PostMapping("/withdraw")
     public ResponseEntity withdraw(@RequestBody AccountMoneyActivityDto accountMoneyActivityDto){
         AccountActivityDto withdraw = accountActivityService.withdraw(accountMoneyActivityDto);
 
-        return ResponseEntity.ok(withdraw);
+        return ResponseEntity.ok(RestResponse.of(withdraw));
     }
 
     @PostMapping("/deposit")
     public ResponseEntity deposit(@RequestBody AccountMoneyActivityDto accountMoneyActivityDto){
         AccountActivityDto deposit = accountActivityService.deposit(accountMoneyActivityDto);
 
-        return ResponseEntity.ok(deposit);
+        return ResponseEntity.ok(RestResponse.of(deposit));
     }
 
 

@@ -1,5 +1,6 @@
 package com.thardal.bankapp.global.exception;
 
+import com.thardal.bankapp.global.dto.RestResponse;
 import com.thardal.bankapp.global.exceptions.BusinessException;
 import com.thardal.bankapp.global.exceptions.ItemNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -28,20 +29,29 @@ public class GlobalCustomExceptionHandler extends ResponseEntityExceptionHandler
 //    }
 
     @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<String> handleCustomException(ItemNotFoundException ex) {
-        String errorMessage = "An error occurred: " + ex.getMessage();
-        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> handleCustomException(ItemNotFoundException ex) {
+        String errorMessage = "An error occurred: " + ex.getBaseErrorMessages().getMessage();
+
+        RestResponse<String> restResponse = RestResponse.error(errorMessage);
+        restResponse.setMessage(errorMessage);
+
+        return new ResponseEntity<>(restResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception ex) {
+    public ResponseEntity<Object> handleException(Exception ex) {
         String errorMessage = "An unexpected error occurred: " + ex.getMessage();
-        return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        RestResponse<String> restResponse = RestResponse.error(errorMessage);
+        restResponse.setMessage(errorMessage);
+
+        return new ResponseEntity<>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<String> handleBusinessException(BusinessException ex) {
+    public ResponseEntity<Object> handleBusinessException(BusinessException ex) {
         String errorMessage = "An business error occurred: " + ex.getBaseErrorMessages().getMessage();
-        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+        RestResponse<String> restResponse = RestResponse.error(errorMessage);
+        restResponse.setMessage(errorMessage);
+        return new ResponseEntity<>(restResponse, HttpStatus.NOT_FOUND);
     }
 }

@@ -3,7 +3,7 @@ package com.thardal.bankapp.global.service;
 import com.thardal.bankapp.global.entity.BaseAdditionalFields;
 import com.thardal.bankapp.global.entity.BaseEntity;
 import com.thardal.bankapp.global.enums.GlobalErrorMessages;
-import com.thardal.bankapp.global.exceptions.BusinessException;
+import com.thardal.bankapp.global.exceptions.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -73,7 +73,7 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
         if (entityOptional.isPresent()) {
             entity = entityOptional.get();
         } else {
-            throw new BusinessException(GlobalErrorMessages.ITEM_NOT_FOUND);
+            throw new ItemNotFoundException(GlobalErrorMessages.ITEM_NOT_FOUND);
         }
         return entity;
     }
