@@ -5,7 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class WithdrawRequestDto {
+public class AccountMoneyActivityDto {
     private Long accountId;
     private BigDecimal amount;
 }

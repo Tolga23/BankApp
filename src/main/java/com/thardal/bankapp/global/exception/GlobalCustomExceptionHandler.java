@@ -15,16 +15,16 @@ import java.util.Date;
 @ControllerAdvice
 public class GlobalCustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler
-    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest webRequest) {
-        Date errorDate = new Date();
-        String errorMessage = ex.getMessage();
-        String description = webRequest.getDescription(false);
-
-        GlobalExceptionResponse globalExceptionResponse = new GlobalExceptionResponse(errorDate, errorMessage, description);
-
-        return new ResponseEntity<>(globalExceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler
+//    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest webRequest) {
+//        Date errorDate = new Date();
+//        String errorMessage = ex.getMessage();
+//        String description = webRequest.getDescription(false);
+//
+//        GlobalExceptionResponse globalExceptionResponse = new GlobalExceptionResponse(errorDate, errorMessage, description);
+//
+//        return new ResponseEntity<>(globalExceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler(ItemNotFoundException.class)
     public ResponseEntity<String> handleCustomException(ItemNotFoundException ex) {

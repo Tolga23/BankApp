@@ -2,7 +2,7 @@ package com.thardal.bankapp.account.service;
 
 import com.thardal.bankapp.account.converter.AccountMapper;
 import com.thardal.bankapp.account.dto.AccountActivityDto;
-import com.thardal.bankapp.account.dto.WithdrawRequestDto;
+import com.thardal.bankapp.account.dto.AccountMoneyActivityDto;
 import com.thardal.bankapp.account.entity.Account;
 import com.thardal.bankapp.account.entity.AccountActivity;
 import com.thardal.bankapp.account.enums.AccountActivityType;
@@ -20,19 +20,19 @@ public class AccountActivityService {
     private final AccountActivityEntityService accountActivityEntityService;
     private final AccountEntityService accountEntityService;
 
-    public AccountActivityDto withdraw(WithdrawRequestDto withdrawRequestDto) {
+    public AccountActivityDto withdraw(AccountMoneyActivityDto accountMoneyActivityDto) {
 
-        Long accountId = withdrawRequestDto.getAccountId();
-        BigDecimal amount = withdrawRequestDto.getAmount();
+        Long accountId = accountMoneyActivityDto.getAccountId();
+        BigDecimal amount = accountMoneyActivityDto.getAmount();
 
-        AccountActivity accountActivity = moneyOut(accountId, amount);
+        AccountActivity accountActivity = moneyOut(accountId, amount, AccountActivityType.WITHDRAW);
 
         AccountActivityDto accountActivityDto = AccountMapper.INSTANCE.convertToAccountActivityDto(accountActivity);
 
         return accountActivityDto;
     }
 
-    public AccountActivity moneyOut(Long accountId, BigDecimal amount) {
+    public AccountActivity moneyOut(Long accountId, BigDecimal amount,AccountActivityType accountActivityType) {
         // Get the account by id
         Account account = accountEntityService.getByIdWithControl(accountId);
 
@@ -42,7 +42,7 @@ public class AccountActivityService {
         // If the balance is less than 0, throw an exception
         validateBalance(remainingBalance);
 
-        AccountActivity accountActivity = createAccountActivity(accountId, amount, remainingBalance, AccountActivityType.SEND);
+        AccountActivity accountActivity = createAccountActivity(accountId, amount, remainingBalance, accountActivityType);
 
         // Update the account balance with the remaining balance and save it
         updateCurrentBalance(account, remainingBalance);
@@ -50,12 +50,12 @@ public class AccountActivityService {
         return accountActivity;
     }
 
-    public AccountActivity moneyIn(Long accountId, BigDecimal amount) {
+    public AccountActivity moneyIn(Long accountId, BigDecimal amount,AccountActivityType accountActivityType) {
         Account account = accountEntityService.getByIdWithControl(accountId);
 
         BigDecimal newBalance = account.getCurrentBalance().add(amount);
 
-        AccountActivity accountActivity = createAccountActivity(accountId, amount, newBalance, AccountActivityType.GET);
+        AccountActivity accountActivity = createAccountActivity(accountId, amount, newBalance, accountActivityType);
 
         updateCurrentBalance(account, newBalance);
 
@@ -80,5 +80,16 @@ public class AccountActivityService {
         accountActivity.setCurrentBalance(remainingBalance);
         accountActivity = accountActivityEntityService.save(accountActivity);
         return accountActivity;
+    }
+
+    public AccountActivityDto deposit(AccountMoneyActivityDto accountMoneyActivityDto) {
+        Long accountId = accountMoneyActivityDto.getAccountId();
+        BigDecimal amount = accountMoneyActivityDto.getAmount();
+
+        AccountActivity accountActivity = moneyIn(accountId, amount, AccountActivityType.DEPOSIT);
+
+        AccountActivityDto accountActivityDto = AccountMapper.INSTANCE.convertToAccountActivityDto(accountActivity);
+
+        return accountActivityDto;
     }
 }
