@@ -1,11 +1,19 @@
 package com.thardal.bankapp.card.service;
 
+import com.thardal.bankapp.card.converter.CreditCardActivityMapper;
 import com.thardal.bankapp.card.converter.CreditCardMapper;
+import com.thardal.bankapp.card.dto.CreditCardActivityDto;
 import com.thardal.bankapp.card.dto.CreditCardDto;
 import com.thardal.bankapp.card.dto.CreditCardSaveRequestDto;
+import com.thardal.bankapp.card.dto.CreditCardSpendDto;
 import com.thardal.bankapp.card.entity.CreditCard;
+import com.thardal.bankapp.card.entity.CreditCardActivity;
+import com.thardal.bankapp.card.enums.CreditCardActivityType;
+import com.thardal.bankapp.card.enums.CreditCardErrorMessage;
+import com.thardal.bankapp.card.service.entities.CreditCardActivityEntityService;
 import com.thardal.bankapp.card.service.entities.CreditCardEntityService;
 import com.thardal.bankapp.global.enums.GlobalStatusType;
+import com.thardal.bankapp.global.exceptions.BusinessException;
 import com.thardal.bankapp.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,12 +24,12 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CreditCardService {
     private final CreditCardEntityService creditCardEntityService;
+    private final CreditCardActivityEntityService creditCardActivityEntityService;
 
     public List<CreditCardDto> findAll() {
         List<CreditCard> creditCard = creditCardEntityService.findAllActiveCreditCardList();
@@ -51,6 +59,80 @@ public class CreditCardService {
         CreditCardDto creditCardDto = createCardAndConvertToCreditCardDto(customerId, limit, dueDate, cutOfDate);
 
         return creditCardDto;
+    }
+
+    public CreditCardActivityDto spend(CreditCardSpendDto creditCardSpendDto) {
+
+        BigDecimal amount = creditCardSpendDto.getAmount();
+        String description = creditCardSpendDto.getDescription();
+
+        // get credit card by card no, cvv no and expire date
+        CreditCard creditCard = getCreditCard(creditCardSpendDto);
+
+        // validate credit card is exist and not expired
+        validateCreditCard(creditCard);
+
+        // calculate current debt and current available card limit
+        BigDecimal currentDept = creditCard.getCurrentDebt().add(amount);
+        BigDecimal availableCardLimit = creditCard.getAvailableCardLimit().subtract(amount);
+
+        // validate available card limit
+        validateCardLimit(availableCardLimit);
+
+        // update credit card with current debt and available card limit
+        creditCard = updateCreditCardForSpend(creditCard, currentDept, availableCardLimit);
+
+        // create credit card activity for spend and convert to credit card activity dto
+        CreditCardActivity creditCardActivity = createCreditCardActivity(amount, description, creditCard);
+        CreditCardActivityDto creditCardActivityDto = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDto(creditCardActivity);
+
+        return creditCardActivityDto;
+    }
+
+    private CreditCard updateCreditCardForSpend(CreditCard creditCard, BigDecimal currentDept, BigDecimal availableCardLimit) {
+        creditCard.setCurrentDebt(currentDept);
+        creditCard.setAvailableCardLimit(availableCardLimit);
+
+        creditCard = creditCardEntityService.save(creditCard);
+
+        return creditCard;
+    }
+
+    private CreditCard getCreditCard(CreditCardSpendDto creditCardSpendDto) {
+        Long cardNo = creditCardSpendDto.getCardNo();
+        Long cvvNo = creditCardSpendDto.getCvvNo();
+        Date expiryDate = creditCardSpendDto.getExpiryDate();
+        CreditCard creditCard = creditCardEntityService.findByCardNoAndCvvNoAndExpiryDate(cardNo, cvvNo, expiryDate);
+        return creditCard;
+    }
+
+    private void validateCardLimit(BigDecimal availableCardLimit) {
+        if(availableCardLimit.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException(CreditCardErrorMessage.INSUFFICIENT_CARD_LIMIT);
+        }
+    }
+
+    private void validateCreditCard(CreditCard creditCard) {
+        if (creditCard == null) {
+            throw new BusinessException(CreditCardErrorMessage.CREDIT_CARD_NOT_FOUND);
+        }
+
+        if(creditCard.getExpiryDate().before(new Date())) {
+            throw new BusinessException(CreditCardErrorMessage.CREDIT_CARD_EXPIRED);
+        }
+    }
+
+    private CreditCardActivity createCreditCardActivity(BigDecimal amount, String description, CreditCard creditCard) {
+        CreditCardActivity creditCardActivity = new CreditCardActivity();
+        creditCardActivity.setCreditCardId(creditCard.getId());
+        creditCardActivity.setAmount(amount);
+        creditCardActivity.setDescription(description);
+        creditCardActivity.setTransactionDate(new Date());
+        creditCardActivity.setActivityType(CreditCardActivityType.SPEND);
+
+
+        creditCardActivity = creditCardActivityEntityService.save(creditCardActivity);
+        return creditCardActivity;
     }
 
     public void cancel(Long cardId) {

@@ -1,7 +1,9 @@
 package com.thardal.bankapp.card.controller;
 
+import com.thardal.bankapp.card.dto.CreditCardActivityDto;
 import com.thardal.bankapp.card.dto.CreditCardDto;
 import com.thardal.bankapp.card.dto.CreditCardSaveRequestDto;
+import com.thardal.bankapp.card.dto.CreditCardSpendDto;
 import com.thardal.bankapp.card.service.CreditCardService;
 import com.thardal.bankapp.global.dto.RestResponse;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,13 @@ public class CreditCardController {
         creditCardService.cancel(cardId);
 
         return ResponseEntity.ok(RestResponse.empty());
+    }
+
+    @PostMapping("/spend")
+    public ResponseEntity spend(@RequestBody CreditCardSpendDto creditCardSpendDto) {
+        CreditCardActivityDto creditCardActivityDto = creditCardService.spend(creditCardSpendDto);
+
+        return ResponseEntity.ok(RestResponse.of(creditCardActivityDto));
     }
 
 
