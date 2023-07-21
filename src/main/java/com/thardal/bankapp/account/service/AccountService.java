@@ -9,6 +9,7 @@ import com.thardal.bankapp.global.enums.GlobalStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -18,7 +19,7 @@ public class AccountService {
 
 
     public List<AccountDto> findAll() {
-        List<Account> accountList = accountEntityService.findAll();
+        List<Account> accountList = accountEntityService.findAllActiveAccountList(GlobalStatusType.ACTIVE);
 
         List<AccountDto> accountDtoList = AccountMapper.INSTANCE.convertToAccountDtoList(accountList);
 
@@ -46,6 +47,7 @@ public class AccountService {
     public void cancel(Long accountId) {
         Account account = accountEntityService.getByIdWithControl(accountId);
         account.setStatusType(GlobalStatusType.PASSIVE);
+        account.setCancalDate(new Date());
 
         accountEntityService.save(account);
 

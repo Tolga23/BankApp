@@ -30,12 +30,18 @@ public class CreditCardController {
         return ResponseEntity.ok(RestResponse.of(creditCardDto));
     }
 
-
     @PostMapping
     public ResponseEntity save(@RequestBody CreditCardSaveRequestDto creditCardSaveRequestDto) {
         CreditCardDto creditCardDto = creditCardService.save(creditCardSaveRequestDto);
 
         return ResponseEntity.ok(RestResponse.of(creditCardDto));
+    }
+
+    @PatchMapping("/cancel/{cardId}")
+    public ResponseEntity cancel(@PathVariable Long cardId){
+        creditCardService.cancel(cardId);
+
+        return ResponseEntity.ok(RestResponse.empty());
     }
 
 

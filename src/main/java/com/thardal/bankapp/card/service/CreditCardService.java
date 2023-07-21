@@ -5,6 +5,7 @@ import com.thardal.bankapp.card.dto.CreditCardDto;
 import com.thardal.bankapp.card.dto.CreditCardSaveRequestDto;
 import com.thardal.bankapp.card.entity.CreditCard;
 import com.thardal.bankapp.card.service.entities.CreditCardEntityService;
+import com.thardal.bankapp.global.enums.GlobalStatusType;
 import com.thardal.bankapp.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class CreditCardService {
     private final CreditCardEntityService creditCardEntityService;
 
     public List<CreditCardDto> findAll() {
-        List<CreditCard> creditCard = creditCardEntityService.findAll();
+        List<CreditCard> creditCard = creditCardEntityService.findAllActiveCreditCardList();
         List<CreditCardDto> creditCardDto = CreditCardMapper.INSTANCE.convertToCreditCardListDto(creditCard);
         return creditCardDto;
     }
@@ -50,6 +51,15 @@ public class CreditCardService {
         CreditCardDto creditCardDto = createCardAndConvertToCreditCardDto(customerId, limit, dueDate, cutOfDate);
 
         return creditCardDto;
+    }
+
+    public void cancel(Long cardId) {
+        CreditCard creditCard = creditCardEntityService.getByIdWithControl(cardId);
+
+        creditCard.setStatusType(GlobalStatusType.PASSIVE);
+        creditCard.setCancalDate(new Date());
+
+        creditCardEntityService.save(creditCard);
     }
 
     private CreditCardDto createCardAndConvertToCreditCardDto(Long customerId, BigDecimal limit, Date dueDate, Date cutOfDate) {

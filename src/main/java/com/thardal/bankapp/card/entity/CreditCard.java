@@ -1,6 +1,7 @@
 package com.thardal.bankapp.card.entity;
 
 import com.thardal.bankapp.global.entity.BaseEntity;
+import com.thardal.bankapp.global.enums.GlobalStatusType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -50,5 +51,13 @@ public class CreditCard extends BaseEntity {
     @Temporal(TemporalType.DATE)
     @Column(name = "DUE_DATE", nullable = false)
     private Date dueDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS_TYPE", length = 30)
+    private GlobalStatusType statusType;
+
+    @Column(name = "CANCEL_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date cancalDate;
 
 }

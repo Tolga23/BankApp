@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name = "ACCOUNT")
@@ -39,5 +40,9 @@ public class Account extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS_TYPE", length = 30)
     private GlobalStatusType statusType;
+
+    @Column(name = "CANCEL_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date cancalDate;
 
 }
