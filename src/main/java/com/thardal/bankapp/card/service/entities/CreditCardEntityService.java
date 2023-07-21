@@ -6,6 +6,7 @@ import com.thardal.bankapp.global.enums.GlobalStatusType;
 import com.thardal.bankapp.global.service.BaseEntityService;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,5 +21,9 @@ public class CreditCardEntityService extends BaseEntityService<CreditCard, Credi
 
     public List<CreditCard> findAllActiveCreditCardList() {
         return getDao().findAllByStatusType(GlobalStatusType.ACTIVE);
+    }
+
+    public CreditCard findByCardNoAndCvvNoAndExpiryDate(Long cardNo, Long cvvNo, Date expiryDate) {
+        return getDao().findByCardNoAndCvvNoAndExpiryDateAndStatusType(cardNo, cvvNo, expiryDate, GlobalStatusType.ACTIVE);
     }
 }
