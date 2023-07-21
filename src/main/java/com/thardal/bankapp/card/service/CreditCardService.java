@@ -14,11 +14,27 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CreditCardService {
     private final CreditCardEntityService creditCardEntityService;
+
+    public List<CreditCardDto> findAll() {
+        List<CreditCard> creditCard = creditCardEntityService.findAll();
+        List<CreditCardDto> creditCardDto = CreditCardMapper.INSTANCE.convertToCreditCardListDto(creditCard);
+        return creditCardDto;
+    }
+
+    public CreditCardDto findById(Long id) {
+        CreditCard creditCardById = creditCardEntityService.getByIdWithControl(id);
+
+        CreditCardDto creditCardDto = CreditCardMapper.INSTANCE.convertToCreditCardDto(creditCardById);
+
+        return creditCardDto;
+    }
 
     public CreditCardDto save(CreditCardSaveRequestDto creditCardSaveRequestDto) {
         Long customerId = creditCardSaveRequestDto.getCustomerId();

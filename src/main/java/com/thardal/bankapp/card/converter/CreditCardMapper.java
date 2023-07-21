@@ -7,13 +7,19 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CreditCardMapper {
 
     CreditCardMapper INSTANCE = Mappers.getMapper(CreditCardMapper.class);
+
     CreditCard convertToCreditCard(CreditCardDto creditCardDto);
 
+    List<CreditCardDto> convertToCreditCardListDto(List<CreditCard> creditCard);
+
     CreditCardDto convertToCreditCardDto(CreditCard creditCard);
+
     CreditCardSaveRequestDto convertToCreditCardSaveRequestDto(CreditCard creditCard);
 
 }
