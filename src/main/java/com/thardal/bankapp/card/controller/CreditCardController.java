@@ -26,7 +26,7 @@ public class CreditCardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity findById(@PathVariable Long id){
+    public ResponseEntity findById(@PathVariable Long id) {
         CreditCardDto creditCardDto = creditCardService.findById(id);
 
         return ResponseEntity.ok(RestResponse.of(creditCardDto));
@@ -40,7 +40,7 @@ public class CreditCardController {
     }
 
     @PatchMapping("/cancel/{cardId}")
-    public ResponseEntity cancel(@PathVariable Long cardId){
+    public ResponseEntity cancel(@PathVariable Long cardId) {
         creditCardService.cancel(cardId);
 
         return ResponseEntity.ok(RestResponse.empty());
@@ -49,6 +49,13 @@ public class CreditCardController {
     @PostMapping("/spend")
     public ResponseEntity spend(@RequestBody CreditCardSpendDto creditCardSpendDto) {
         CreditCardActivityDto creditCardActivityDto = creditCardService.spend(creditCardSpendDto);
+
+        return ResponseEntity.ok(RestResponse.of(creditCardActivityDto));
+    }
+
+    @PostMapping("/refund/{activityId}")
+    public ResponseEntity refund(@PathVariable Long activityId) {
+        CreditCardActivityDto creditCardActivityDto = creditCardService.refund(activityId);
 
         return ResponseEntity.ok(RestResponse.of(creditCardActivityDto));
     }
