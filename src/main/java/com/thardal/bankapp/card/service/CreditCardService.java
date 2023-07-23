@@ -89,6 +89,46 @@ public class CreditCardService {
         return creditCardActivityDto;
     }
 
+    public CreditCardActivityDto refund(Long activityId) {
+        CreditCardActivity oldCreditCardActivity = creditCardActivityEntityService.getByIdWithControl(activityId);
+        BigDecimal amount = oldCreditCardActivity.getAmount();
+
+        CreditCard creditCard = updateCreditCardForRefund(oldCreditCardActivity, amount);
+
+        CreditCardActivity creditCardActivity = createCreditCardActivityForRefund(oldCreditCardActivity, amount, creditCard);
+
+        CreditCardActivityDto creditCardActivityDto = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDto(creditCardActivity);
+
+        return creditCardActivityDto;
+    }
+
+    private CreditCardActivity createCreditCardActivityForRefund(CreditCardActivity oldCreditCardActivity, BigDecimal amount, CreditCard creditCard) {
+        String description = "REFUND -> " + oldCreditCardActivity.getDescription();
+
+        CreditCardActivity creditCardActivity = new CreditCardActivity();
+        creditCardActivity.setCreditCardId(creditCard.getId());
+        creditCardActivity.setAmount(amount);
+        creditCardActivity.setDescription(description);
+        creditCardActivity.setTransactionDate(new Date());
+        creditCardActivity.setActivityType(CreditCardActivityType.REFUND);
+
+
+        creditCardActivity = creditCardActivityEntityService.save(creditCardActivity);
+        return creditCardActivity;
+    }
+
+    private CreditCard updateCreditCardForRefund(CreditCardActivity oldCreditCardActivity, BigDecimal amount) {
+        CreditCard creditCard = creditCardEntityService.getByIdWithControl(oldCreditCardActivity.getCreditCardId());
+
+        BigDecimal currentDebt = creditCard.getCurrentDebt().subtract(amount);
+        BigDecimal currentAvailableLimit = creditCard.getAvailableCardLimit().add(amount);
+
+        creditCard.setCurrentDebt(currentDebt);
+        creditCard.setAvailableCardLimit(currentAvailableLimit);
+        creditCard = creditCardEntityService.save(creditCard);
+        return creditCard;
+    }
+
     private CreditCard updateCreditCardForSpend(CreditCard creditCard, BigDecimal currentDept, BigDecimal availableCardLimit) {
         creditCard.setCurrentDebt(currentDept);
         creditCard.setAvailableCardLimit(availableCardLimit);
@@ -107,7 +147,7 @@ public class CreditCardService {
     }
 
     private void validateCardLimit(BigDecimal availableCardLimit) {
-        if(availableCardLimit.compareTo(BigDecimal.ZERO) < 0) {
+        if (availableCardLimit.compareTo(BigDecimal.ZERO) < 0) {
             throw new BusinessException(CreditCardErrorMessage.INSUFFICIENT_CARD_LIMIT);
         }
     }
@@ -117,7 +157,7 @@ public class CreditCardService {
             throw new BusinessException(CreditCardErrorMessage.CREDIT_CARD_NOT_FOUND);
         }
 
-        if(creditCard.getExpiryDate().before(new Date())) {
+        if (creditCard.getExpiryDate().before(new Date())) {
             throw new BusinessException(CreditCardErrorMessage.CREDIT_CARD_EXPIRED);
         }
     }
