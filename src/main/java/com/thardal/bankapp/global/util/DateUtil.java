@@ -1,7 +1,5 @@
 package com.thardal.bankapp.global.util;
 
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,6 +7,11 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public class DateUtil {
+
+    public static LocalDate convertToLocalDate(Date dateToConvert) {
+        LocalDate localDate = Instant.ofEpochMilli(dateToConvert.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        return localDate;
+    }
     public static LocalDateTime convertToLocalDateTime(Date dateToConvert) {
         return dateToConvert.toInstant()
                 .atZone(ZoneId.systemDefault())
