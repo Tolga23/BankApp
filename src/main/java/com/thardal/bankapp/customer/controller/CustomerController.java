@@ -6,8 +6,10 @@ import com.thardal.bankapp.customer.dto.CustomerUpdateRequestDto;
 import com.thardal.bankapp.customer.service.CustomerService;
 import com.thardal.bankapp.global.dto.RestResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,9 +35,27 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody CustomerSaveRequestDto customerSaveRequestDto){
+    public ResponseEntity save(@RequestBody CustomerSaveRequestDto customerSaveRequestDto) {
         CustomerDto customerDto = customerService.save(customerSaveRequestDto);
-        return ResponseEntity.ok(RestResponse.of(customerDto));
+
+        // WebMvcLinkBuilder is used to create links to methods
+        WebMvcLinkBuilder linkGet = WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(this.getClass()).findById(customerDto.getId()));
+
+        WebMvcLinkBuilder linkDelete = WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(this.getClass()).delete(customerDto.getId()));
+
+        // entityModel is used to add links to the response
+        EntityModel entityModel = EntityModel.of(customerDto);
+
+        // Add the link to the response
+        entityModel.add(linkGet.withRel("find-by-id"));
+        entityModel.add(linkDelete.withRel("delete"));
+
+        // serialize the response
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(entityModel);
+
+        return ResponseEntity.ok(RestResponse.of(mappingJacksonValue));
     }
 
     @DeleteMapping("/{id}")
