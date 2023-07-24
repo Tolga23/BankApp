@@ -242,6 +242,7 @@ public class CreditCardService {
         creditCard.setMinimumPaymentAmount(BigDecimal.ZERO);
         creditCard.setCurrentDebt(BigDecimal.ZERO);
         creditCard.setAvailableCardLimit(limit);
+        creditCard.setStatusType(GlobalStatusType.ACTIVE);
 
         creditCard = creditCardEntityService.save(creditCardEntityService.save(creditCard));
         return creditCard;
@@ -310,7 +311,7 @@ public class CreditCardService {
         Date termEndDate = creditCard.getCutOffDate();
         Long creditCardId = creditCard.getId();
 
-        LocalDate cutOffDateLocalDate = LocalDate.ofInstant(termEndDate.toInstant(), ZoneId.systemDefault());
+        LocalDate cutOffDateLocalDate = DateUtil.convertToLocalDate(termEndDate);
         LocalDate termStartDateLocal = cutOffDateLocalDate.minusMonths(1);
         Date termStartDate = DateUtil.convertToDate(termStartDateLocal);
 
