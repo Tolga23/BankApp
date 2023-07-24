@@ -1,15 +1,14 @@
 package com.thardal.bankapp.card.controller;
 
-import com.thardal.bankapp.card.dto.CreditCardActivityDto;
-import com.thardal.bankapp.card.dto.CreditCardDto;
-import com.thardal.bankapp.card.dto.CreditCardSaveRequestDto;
-import com.thardal.bankapp.card.dto.CreditCardSpendDto;
+import com.thardal.bankapp.card.dto.*;
 import com.thardal.bankapp.card.service.CreditCardService;
 import com.thardal.bankapp.global.dto.RestResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -58,6 +57,29 @@ public class CreditCardController {
         CreditCardActivityDto creditCardActivityDto = creditCardService.refund(activityId);
 
         return ResponseEntity.ok(RestResponse.of(creditCardActivityDto));
+    }
+
+    @PostMapping("/payment")
+    public ResponseEntity payment(@RequestBody CreditCardPaymentDto creditCardPaymentDto) {
+        CreditCardActivityDto creditCardActivityDto = creditCardService.payment(creditCardPaymentDto);
+
+        return ResponseEntity.ok(RestResponse.of(creditCardActivityDto));
+    }
+
+    @GetMapping("/{id}/activities")
+    public ResponseEntity findAllActivities(@PathVariable Long id,
+                                            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+                                            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
+        List<CreditCardActivityDto> creditCardActivityDtoList = creditCardService.findAllActivities(id, startDate, endDate);
+
+        return ResponseEntity.ok(RestResponse.of(creditCardActivityDtoList));
+    }
+
+    @GetMapping("/{id}/statements")
+    public ResponseEntity statement(@PathVariable Long id) {
+        CreditCardStatementDto creditCardStatementDto = creditCardService.statement(id);
+
+        return ResponseEntity.ok(RestResponse.of(creditCardStatementDto));
     }
 
 

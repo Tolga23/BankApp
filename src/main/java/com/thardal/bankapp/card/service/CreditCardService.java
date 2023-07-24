@@ -2,10 +2,7 @@ package com.thardal.bankapp.card.service;
 
 import com.thardal.bankapp.card.converter.CreditCardActivityMapper;
 import com.thardal.bankapp.card.converter.CreditCardMapper;
-import com.thardal.bankapp.card.dto.CreditCardActivityDto;
-import com.thardal.bankapp.card.dto.CreditCardDto;
-import com.thardal.bankapp.card.dto.CreditCardSaveRequestDto;
-import com.thardal.bankapp.card.dto.CreditCardSpendDto;
+import com.thardal.bankapp.card.dto.*;
 import com.thardal.bankapp.card.entity.CreditCard;
 import com.thardal.bankapp.card.entity.CreditCardActivity;
 import com.thardal.bankapp.card.enums.CreditCardActivityType;
@@ -22,6 +19,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -84,7 +82,7 @@ public class CreditCardService {
 
         // create credit card activity for spend and convert to credit card activity dto
         CreditCardActivity creditCardActivity = createCreditCardActivity(amount, description, creditCard);
-        CreditCardActivityDto creditCardActivityDto = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDto(creditCardActivity);
+        CreditCardActivityDto creditCardActivityDto = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDtoList(creditCardActivity);
 
         return creditCardActivityDto;
     }
@@ -97,7 +95,23 @@ public class CreditCardService {
 
         CreditCardActivity creditCardActivity = createCreditCardActivityForRefund(oldCreditCardActivity, amount, creditCard);
 
-        CreditCardActivityDto creditCardActivityDto = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDto(creditCardActivity);
+        CreditCardActivityDto creditCardActivityDto = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDtoList(creditCardActivity);
+
+        return creditCardActivityDto;
+    }
+
+    public CreditCardActivityDto payment(CreditCardPaymentDto creditCardPaymentDto) {
+        Long creditCardId = creditCardPaymentDto.getCreditCardId();
+        BigDecimal amount = creditCardPaymentDto.getAmount();
+
+        CreditCard creditCard = creditCardEntityService.getByIdWithControl(creditCardId);
+
+
+        addLimitToCreditCard(creditCard, amount);
+
+        CreditCardActivity creditCardActivityForPayment = createCreditCardActivityForPayment(creditCardId, amount);
+
+        CreditCardActivityDto creditCardActivityDto = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDtoList(creditCardActivityForPayment);
 
         return creditCardActivityDto;
     }
@@ -120,6 +134,25 @@ public class CreditCardService {
     private CreditCard updateCreditCardForRefund(CreditCardActivity oldCreditCardActivity, BigDecimal amount) {
         CreditCard creditCard = creditCardEntityService.getByIdWithControl(oldCreditCardActivity.getCreditCardId());
 
+        creditCard = addLimitToCreditCard(creditCard, amount);
+        return creditCard;
+    }
+
+    private CreditCardActivity createCreditCardActivityForPayment(Long creditCardId, BigDecimal amount) {
+
+        CreditCardActivity creditCardActivity = new CreditCardActivity();
+        creditCardActivity.setCreditCardId(creditCardId);
+        creditCardActivity.setAmount(amount);
+        creditCardActivity.setDescription("PAYMENT");
+        creditCardActivity.setTransactionDate(new Date());
+        creditCardActivity.setActivityType(CreditCardActivityType.PAYMENT);
+
+
+        creditCardActivity = creditCardActivityEntityService.save(creditCardActivity);
+        return creditCardActivity;
+    }
+
+    private CreditCard addLimitToCreditCard(CreditCard creditCard, BigDecimal amount) {
         BigDecimal currentDebt = creditCard.getCurrentDebt().subtract(amount);
         BigDecimal currentAvailableLimit = creditCard.getAvailableCardLimit().add(amount);
 
@@ -263,5 +296,34 @@ public class CreditCardService {
         LocalDate dueDateLocal = getDueDateLocal(cutOffDateLocal);
         Date dueDate = DateUtil.convertToDate(dueDateLocal);
         return dueDate;
+    }
+
+    public List<CreditCardActivityDto> findAllActivities(Long id, Date startDate, Date endDate) {
+        List<CreditCardActivity> creditCardActivityList = creditCardActivityEntityService.findAllByCreditCardIdAndTransactionDateBetween(id, startDate, endDate);
+        List<CreditCardActivityDto> creditCardActivityDtoList = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDtoList(creditCardActivityList);
+
+        return creditCardActivityDtoList;
+    }
+
+    public CreditCardStatementDto statement(Long id) {
+        CreditCard creditCard = creditCardEntityService.getByIdWithControl(id);
+        Date termEndDate = creditCard.getCutOffDate();
+        Long creditCardId = creditCard.getId();
+
+        LocalDate cutOffDateLocalDate = LocalDate.ofInstant(termEndDate.toInstant(), ZoneId.systemDefault());
+        LocalDate termStartDateLocal = cutOffDateLocalDate.minusMonths(1);
+        Date termStartDate = DateUtil.convertToDate(termStartDateLocal);
+
+        CreditCardStatementDto creditCardStatementDto = creditCardEntityService.getCreditCardDetails(creditCardId);
+
+        List<CreditCardActivity> creditCardActivityList = creditCardActivityEntityService.
+                findAllByCreditCardIdAndTransactionDateBetween(creditCard.getId(), termStartDate, termEndDate);
+
+        List<CreditCardActivityDto> creditCardActivityDtoList = CreditCardActivityMapper.INSTANCE.
+                convertToCreditCardActivityDtoList(creditCardActivityList);
+
+        creditCardStatementDto.setCreditCardActivityDtoList(creditCardActivityDtoList);
+
+        return creditCardStatementDto;
     }
 }

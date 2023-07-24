@@ -1,6 +1,7 @@
 package com.thardal.bankapp.card.service.entities;
 
 import com.thardal.bankapp.card.dao.CreditCardDao;
+import com.thardal.bankapp.card.dto.CreditCardStatementDto;
 import com.thardal.bankapp.card.entity.CreditCard;
 import com.thardal.bankapp.global.enums.GlobalStatusType;
 import com.thardal.bankapp.global.service.BaseEntityService;
@@ -25,5 +26,9 @@ public class CreditCardEntityService extends BaseEntityService<CreditCard, Credi
 
     public CreditCard findByCardNoAndCvvNoAndExpiryDate(Long cardNo, Long cvvNo, Date expiryDate) {
         return getDao().findByCardNoAndCvvNoAndExpiryDateAndStatusType(cardNo, cvvNo, expiryDate, GlobalStatusType.ACTIVE);
+    }
+
+    public CreditCardStatementDto getCreditCardDetails(Long creditCardId){
+        return getDao().getCreditCardDetails(creditCardId);
     }
 }
