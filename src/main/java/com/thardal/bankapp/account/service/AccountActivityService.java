@@ -12,12 +12,14 @@ import com.thardal.bankapp.account.service.entityservice.AccountEntityService;
 import com.thardal.bankapp.global.exceptions.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AccountActivityService {
     private final AccountActivityEntityService accountActivityEntityService;
     private final AccountEntityService accountEntityService;
