@@ -11,4 +11,8 @@ public class CustomerEntityService extends BaseEntityService<Customer, CustomerD
     public CustomerEntityService(CustomerDao dao) {
         super(dao);
     }
+
+    public Customer findByIdentityNo(Long identityNo) {
+        return getDao().findByIdentityNo(identityNo);
+    }
 }
