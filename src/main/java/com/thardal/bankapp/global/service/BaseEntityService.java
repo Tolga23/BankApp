@@ -4,7 +4,10 @@ import com.thardal.bankapp.global.entity.BaseAdditionalFields;
 import com.thardal.bankapp.global.entity.BaseEntity;
 import com.thardal.bankapp.global.enums.GlobalErrorMessages;
 import com.thardal.bankapp.global.exceptions.ItemNotFoundException;
+import com.thardal.bankapp.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
@@ -15,6 +18,12 @@ import java.util.Optional;
 public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepository<E, Long>> {
 
     private final D dao;
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    public void setAuthenticationService(@Lazy AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     public List<E> findAll() {
         return dao.findAll();
@@ -62,8 +71,8 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
     }
 
     private Long getCurrentCustomerId() {
-        Long currentCustomer = null;
-        return currentCustomer;
+        Long currentCustomerId = authenticationService.getCurrentCustomerId();
+        return currentCustomerId;
     }
 
     public E getByIdWithControl(Long id) {

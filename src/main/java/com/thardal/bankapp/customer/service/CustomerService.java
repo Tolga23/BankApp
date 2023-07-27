@@ -11,6 +11,7 @@ import com.thardal.bankapp.customer.service.entityservice.CustomerEntityService;
 import com.thardal.bankapp.global.exceptions.BusinessException;
 import com.thardal.bankapp.global.exceptions.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class CustomerService {
     private final CustomerEntityService customerEntityService;
 
     private final CustomerConverter customerConverter;
+    private final PasswordEncoder passwordEncoder;
 
     public List<CustomerDto> findAll() {
         List<Customer> customerList = customerEntityService.findAll();
@@ -33,6 +35,10 @@ public class CustomerService {
 
     public CustomerDto save(CustomerSaveRequestDto customerSaveRequestDto) {
         Customer customer = CustomerMapper.INSTANCE.convertToCustomerSaveDto(customerSaveRequestDto);
+
+        String encodePassword = passwordEncoder.encode(customer.getPassword());
+        customer.setPassword(encodePassword);
+
         Customer save = customerEntityService.save(customer);
 
         CustomerDto customerDto = CustomerMapper.INSTANCE.convertToCustomerDto(save);
@@ -59,6 +65,8 @@ public class CustomerService {
         isCustomerExisted(customerUpdateRequestDto);
 
         Customer customer = CustomerMapper.INSTANCE.covertToCustomerUpdateDto(customerUpdateRequestDto);
+        String encodePassword = passwordEncoder.encode(customer.getPassword());
+        customer.setPassword(encodePassword);
         customerEntityService.update(customer);
 
         CustomerDto customerDto = CustomerMapper.INSTANCE.convertToCustomerDto(customer);
