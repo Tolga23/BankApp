@@ -12,7 +12,9 @@ import com.thardal.bankapp.card.service.entities.CreditCardEntityService;
 import com.thardal.bankapp.global.enums.GlobalStatusType;
 import com.thardal.bankapp.global.exceptions.BusinessException;
 import com.thardal.bankapp.global.util.DateUtil;
+import com.thardal.bankapp.global.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -44,7 +46,6 @@ public class CreditCardService {
     }
 
     public CreditCardDto save(CreditCardSaveRequestDto creditCardSaveRequestDto) {
-        Long customerId = creditCardSaveRequestDto.getCustomerId();
         BigDecimal earning = creditCardSaveRequestDto.getEarning();
         String cutOffDayStr = creditCardSaveRequestDto.getCutOffDay();
 
@@ -54,7 +55,7 @@ public class CreditCardService {
         Date dueDate = getDueDate(cutOffDateLocal);
         Date cutOfDate = DateUtil.convertToDate(cutOffDateLocal);
 
-        CreditCardDto creditCardDto = createCardAndConvertToCreditCardDto(customerId, limit, dueDate, cutOfDate);
+        CreditCardDto creditCardDto = createCardAndConvertToCreditCardDto(limit, dueDate, cutOfDate);
 
         return creditCardDto;
     }
@@ -217,8 +218,11 @@ public class CreditCardService {
         creditCardEntityService.save(creditCard);
     }
 
-    private CreditCardDto createCardAndConvertToCreditCardDto(Long customerId, BigDecimal limit, Date dueDate, Date cutOfDate) {
-        CreditCard creditCard = createCreditCard(customerId, limit, dueDate, cutOfDate);
+    private CreditCardDto createCardAndConvertToCreditCardDto(BigDecimal limit, Date dueDate, Date cutOfDate) {
+        Long currentCustomerId = creditCardActivityEntityService.getCurrentCustomerId();
+        CreditCard creditCard = createCreditCard(currentCustomerId,limit, dueDate, cutOfDate);
+
+
 
         CreditCardDto creditCardDto = CreditCardMapper.INSTANCE.convertToCreditCardDto(creditCard);
 
@@ -286,11 +290,11 @@ public class CreditCardService {
     }
 
     private long getCvvNo() {
-        return 123L;
+        return StringUtil.getRandomNumber(3);
     }
 
     private long getCardNo() {
-        return 123123125515412L;
+        return StringUtil.getRandomNumber(16);
     }
 
     private Date getDueDate(LocalDate cutOffDateLocal) {

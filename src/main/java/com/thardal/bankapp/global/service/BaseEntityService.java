@@ -70,7 +70,7 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
         additionalFields.setUpdatedBy(currentCustomerId);
     }
 
-    private Long getCurrentCustomerId() {
+    public Long getCurrentCustomerId() {
         Long currentCustomerId = authenticationService.getCurrentCustomerId();
         return currentCustomerId;
     }

@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 @Data
 public class AccountSaveRequestDto {
 
-    private Long customerId;
-    private String ibanNo;
     private BigDecimal currentBalance;
     private AccountCurrencyType currencyType;
     private AccountType accountType;
