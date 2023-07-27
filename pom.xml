@@ -83,7 +83,14 @@
 			<version>0.9.1</version>
 		</dependency>
 
-    </dependencies>
+		<!-- Handler dispatch failed: java.lang.NoClassDefFoundError: javax/xml/bind/DatatypeConverter" Solved -->
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+
+	</dependencies>
 
 	<build>
 		<plugins>

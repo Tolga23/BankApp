@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/credit-card")
+@RequestMapping("/api/credit-card")
 @RequiredArgsConstructor
 public class CreditCardController {
     private final CreditCardService creditCardService;
