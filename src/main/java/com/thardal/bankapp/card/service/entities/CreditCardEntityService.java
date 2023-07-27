@@ -6,11 +6,13 @@ import com.thardal.bankapp.card.entity.CreditCard;
 import com.thardal.bankapp.global.enums.GlobalStatusType;
 import com.thardal.bankapp.global.service.BaseEntityService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
 @Service
+@Transactional
 public class CreditCardEntityService extends BaseEntityService<CreditCard, CreditCardDao> {
     public CreditCardEntityService(CreditCardDao dao) {
         super(dao);

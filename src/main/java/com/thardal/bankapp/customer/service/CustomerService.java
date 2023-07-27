@@ -8,16 +8,17 @@ import com.thardal.bankapp.customer.dto.CustomerUpdateRequestDto;
 import com.thardal.bankapp.customer.entity.Customer;
 import com.thardal.bankapp.customer.enums.CustomerErrorMessages;
 import com.thardal.bankapp.customer.service.entityservice.CustomerEntityService;
-import com.thardal.bankapp.global.exceptions.BusinessException;
 import com.thardal.bankapp.global.exceptions.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomerService {
 
     private final CustomerEntityService customerEntityService;

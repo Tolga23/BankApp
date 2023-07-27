@@ -14,19 +14,19 @@ import com.thardal.bankapp.global.exceptions.BusinessException;
 import com.thardal.bankapp.global.util.DateUtil;
 import com.thardal.bankapp.global.util.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CreditCardService {
     private final CreditCardEntityService creditCardEntityService;
     private final CreditCardActivityEntityService creditCardActivityEntityService;
@@ -220,8 +220,7 @@ public class CreditCardService {
 
     private CreditCardDto createCardAndConvertToCreditCardDto(BigDecimal limit, Date dueDate, Date cutOfDate) {
         Long currentCustomerId = creditCardActivityEntityService.getCurrentCustomerId();
-        CreditCard creditCard = createCreditCard(currentCustomerId,limit, dueDate, cutOfDate);
-
+        CreditCard creditCard = createCreditCard(currentCustomerId, limit, dueDate, cutOfDate);
 
 
         CreditCardDto creditCardDto = CreditCardMapper.INSTANCE.convertToCreditCardDto(creditCard);

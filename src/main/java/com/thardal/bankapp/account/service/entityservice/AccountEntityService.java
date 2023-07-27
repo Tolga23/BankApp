@@ -5,10 +5,12 @@ import com.thardal.bankapp.account.entity.Account;
 import com.thardal.bankapp.global.enums.GlobalStatusType;
 import com.thardal.bankapp.global.service.BaseEntityService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class AccountEntityService extends BaseEntityService<Account, AccountDao> {
 
     public AccountEntityService(AccountDao dao) {

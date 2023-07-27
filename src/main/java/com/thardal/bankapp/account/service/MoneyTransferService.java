@@ -8,12 +8,14 @@ import com.thardal.bankapp.account.enums.AccountActivityType;
 import com.thardal.bankapp.account.service.entityservice.AccountMoneyTransferEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MoneyTransferService {
     private final AccountMoneyTransferEntityService moneyTransferEntityService;
     private final AccountActivityService accountActivityService;

@@ -9,12 +9,14 @@ import com.thardal.bankapp.global.enums.GlobalStatusType;
 import com.thardal.bankapp.global.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AccountService {
     private final AccountEntityService accountEntityService;
 
