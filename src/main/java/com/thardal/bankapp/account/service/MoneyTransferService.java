@@ -1,8 +1,10 @@
 package com.thardal.bankapp.account.service;
 
 import com.thardal.bankapp.account.converter.AccountMapper;
+import com.thardal.bankapp.account.dto.AccountMoneyActivityDto;
 import com.thardal.bankapp.account.dto.MoneyTransferDto;
 import com.thardal.bankapp.account.dto.MoneyTransferSaveRequestDto;
+import com.thardal.bankapp.account.entity.AccountActivity;
 import com.thardal.bankapp.account.entity.AccountMoneyTransfer;
 import com.thardal.bankapp.account.enums.AccountActivityType;
 import com.thardal.bankapp.account.service.entityservice.AccountMoneyTransferEntityService;
@@ -28,8 +30,22 @@ public class MoneyTransferService {
         Long accountIdTo = accountMoneyTransfer.getAccountIdTo();
         BigDecimal amount = accountMoneyTransfer.getAmount();
 
-        accountActivityService.moneyOut(accountIdFrom, amount, AccountActivityType.SEND);
-        accountActivityService.moneyIn(accountIdTo, amount,AccountActivityType.GET);
+        // builder pattern to create an AccountMoneyActivityDto object with the given parameters
+        AccountMoneyActivityDto accountMoneyActivityDtoOut = AccountMoneyActivityDto.builder()
+                .accountId(accountIdFrom)
+                .amount(amount)
+                .accountActivityType(AccountActivityType.SEND)
+                .build();
+
+        accountActivityService.moneyOut(accountMoneyActivityDtoOut);
+
+        AccountMoneyActivityDto accountMoneyActivityDtoOutIn = AccountMoneyActivityDto.builder()
+                .accountId(accountIdTo)
+                .amount(amount)
+                .accountActivityType(AccountActivityType.GET)
+                .build();
+
+        accountActivityService.moneyIn(accountMoneyActivityDtoOutIn);
 
         accountMoneyTransfer = moneyTransferEntityService.save(accountMoneyTransfer);
         MoneyTransferDto moneyTransferDto = AccountMapper.INSTANCE.convertToMoneyTransferDto(accountMoneyTransfer);
