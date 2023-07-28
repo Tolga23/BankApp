@@ -3,6 +3,7 @@ package com.thardal.bankapp.account.service;
 import com.thardal.bankapp.account.converter.AccountMapper;
 import com.thardal.bankapp.account.dto.AccountActivityDto;
 import com.thardal.bankapp.account.dto.AccountMoneyActivityDto;
+import com.thardal.bankapp.account.dto.AccountMoneyActivityRequestDto;
 import com.thardal.bankapp.account.entity.Account;
 import com.thardal.bankapp.account.entity.AccountActivity;
 import com.thardal.bankapp.account.enums.AccountActivityType;
@@ -24,19 +25,38 @@ public class AccountActivityService {
     private final AccountActivityEntityService accountActivityEntityService;
     private final AccountEntityService accountEntityService;
 
-    public AccountActivityDto withdraw(AccountMoneyActivityDto accountMoneyActivityDto) {
+    public AccountActivityDto withdraw(AccountMoneyActivityRequestDto accountMoneyActivityRequestDto) {
+        validateAccountMoneyActivityRequestDto(accountMoneyActivityRequestDto);
 
+<<<<<<< Updated upstream
         Long accountId = accountMoneyActivityDto.getAccountId();
         BigDecimal amount = accountMoneyActivityDto.getAmount();
+=======
+        Long accountId = accountMoneyActivityRequestDto.getAccountId();
+        BigDecimal amount = accountMoneyActivityRequestDto.getAmount();
 
-        AccountActivity accountActivity = moneyOut(accountId, amount, AccountActivityType.WITHDRAW);
+        // builder pattern to create an AccountMoneyActivityDto object with the given parameters
+        AccountMoneyActivityDto moneyActivityDto = AccountMoneyActivityDto.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .accountActivityType(AccountActivityType.WITHDRAW)
+                .build();
+>>>>>>> Stashed changes
+
+        AccountActivity accountActivity = moneyOut(moneyActivityDto);
 
         AccountActivityDto accountActivityDto = AccountMapper.INSTANCE.convertToAccountActivityDto(accountActivity);
 
         return accountActivityDto;
     }
 
-    public AccountActivity moneyOut(Long accountId, BigDecimal amount,AccountActivityType accountActivityType) {
+    public AccountActivity moneyOut(AccountMoneyActivityDto accountMoneyActivityDto) {
+        validateMoneyActivityDto(accountMoneyActivityDto);
+
+        Long accountId = accountMoneyActivityDto.getAccountId();
+        BigDecimal amount = accountMoneyActivityDto.getAmount();
+        AccountActivityType accountActivityType = accountMoneyActivityDto.getAccountActivityType();
+
         // Get the account by id
         Account account = accountEntityService.getByIdWithControl(accountId);
 
@@ -54,7 +74,13 @@ public class AccountActivityService {
         return accountActivity;
     }
 
-    public AccountActivity moneyIn(Long accountId, BigDecimal amount,AccountActivityType accountActivityType) {
+    public AccountActivity moneyIn(AccountMoneyActivityDto accountMoneyActivityDto) {
+        validateMoneyActivityDto(accountMoneyActivityDto);
+
+        Long accountId = accountMoneyActivityDto.getAccountId();
+        BigDecimal amount = accountMoneyActivityDto.getAmount();
+        AccountActivityType accountActivityType = accountMoneyActivityDto.getAccountActivityType();
+
         Account account = accountEntityService.getByIdWithControl(accountId);
 
         BigDecimal newBalance = account.getCurrentBalance().add(amount);
@@ -66,6 +92,28 @@ public class AccountActivityService {
         return accountActivity;
     }
 
+<<<<<<< Updated upstream
+=======
+    public AccountActivityDto deposit(AccountMoneyActivityDto accountMoneyActivityDto) {
+        validateMoneyActivityDto(accountMoneyActivityDto);
+
+        Long accountId = accountMoneyActivityDto.getAccountId();
+        BigDecimal amount = accountMoneyActivityDto.getAmount();
+
+        AccountMoneyActivityDto moneyActivityDto = AccountMoneyActivityDto.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .accountActivityType(AccountActivityType.DEPOSIT)
+                .build();
+
+        AccountActivity accountActivity = moneyIn(moneyActivityDto);
+
+        AccountActivityDto accountActivityDto = AccountMapper.INSTANCE.convertToAccountActivityDto(accountActivity);
+
+        return accountActivityDto;
+    }
+
+>>>>>>> Stashed changes
     private static void validateBalance(BigDecimal remainingBalance) {
         if (remainingBalance.compareTo(BigDecimal.ZERO) < 0) throw new BusinessException(AccountErrorMessage.INSUFFICIENT_BALANCE);
     }
@@ -86,14 +134,11 @@ public class AccountActivityService {
         return accountActivity;
     }
 
-    public AccountActivityDto deposit(AccountMoneyActivityDto accountMoneyActivityDto) {
-        Long accountId = accountMoneyActivityDto.getAccountId();
-        BigDecimal amount = accountMoneyActivityDto.getAmount();
+    private void validateMoneyActivityDto(AccountMoneyActivityDto accountMoneyActivityDto) {
+        if (accountMoneyActivityDto == null) throw new BusinessException(GlobalErrorMessages.PARAMETER_CAN_NOT_BE_NULL);
+    }
 
-        AccountActivity accountActivity = moneyIn(accountId, amount, AccountActivityType.DEPOSIT);
-
-        AccountActivityDto accountActivityDto = AccountMapper.INSTANCE.convertToAccountActivityDto(accountActivity);
-
-        return accountActivityDto;
+    private void validateAccountMoneyActivityRequestDto(AccountMoneyActivityRequestDto accountMoneyActivityRequestDto) {
+        if (accountMoneyActivityRequestDto == null) throw new BusinessException(GlobalErrorMessages.PARAMETER_CAN_NOT_BE_NULL);
     }
 }
