@@ -17,11 +17,11 @@ public class AccountEntityService extends BaseEntityService<Account, AccountDao>
         super(dao);
     }
 
-    public List<Account> findAllActiveAccountList(GlobalStatusType statusType){
+    public List<Account> findAllActiveAccountList(GlobalStatusType statusType) {
         return getDao().findAllByStatusType(statusType);
     }
 
-    public List<Account> findAllByStatusType(){
+    public List<Account> findAllByStatusType() {
         return getDao().findAllByStatusType(GlobalStatusType.ACTIVE);
     }
 

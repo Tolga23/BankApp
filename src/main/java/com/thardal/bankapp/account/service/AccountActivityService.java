@@ -10,6 +10,7 @@ import com.thardal.bankapp.account.enums.AccountActivityType;
 import com.thardal.bankapp.account.enums.AccountErrorMessage;
 import com.thardal.bankapp.account.service.entityservice.AccountActivityEntityService;
 import com.thardal.bankapp.account.service.entityservice.AccountEntityService;
+import com.thardal.bankapp.global.enums.GlobalErrorMessages;
 import com.thardal.bankapp.global.exceptions.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,6 @@ public class AccountActivityService {
     public AccountActivityDto withdraw(AccountMoneyActivityRequestDto accountMoneyActivityRequestDto) {
         validateAccountMoneyActivityRequestDto(accountMoneyActivityRequestDto);
 
-<<<<<<< Updated upstream
-        Long accountId = accountMoneyActivityDto.getAccountId();
-        BigDecimal amount = accountMoneyActivityDto.getAmount();
-=======
         Long accountId = accountMoneyActivityRequestDto.getAccountId();
         BigDecimal amount = accountMoneyActivityRequestDto.getAmount();
 
@@ -41,7 +38,6 @@ public class AccountActivityService {
                 .amount(amount)
                 .accountActivityType(AccountActivityType.WITHDRAW)
                 .build();
->>>>>>> Stashed changes
 
         AccountActivity accountActivity = moneyOut(moneyActivityDto);
 
@@ -92,8 +88,6 @@ public class AccountActivityService {
         return accountActivity;
     }
 
-<<<<<<< Updated upstream
-=======
     public AccountActivityDto deposit(AccountMoneyActivityDto accountMoneyActivityDto) {
         validateMoneyActivityDto(accountMoneyActivityDto);
 
@@ -113,7 +107,6 @@ public class AccountActivityService {
         return accountActivityDto;
     }
 
->>>>>>> Stashed changes
     private static void validateBalance(BigDecimal remainingBalance) {
         if (remainingBalance.compareTo(BigDecimal.ZERO) < 0) throw new BusinessException(AccountErrorMessage.INSUFFICIENT_BALANCE);
     }

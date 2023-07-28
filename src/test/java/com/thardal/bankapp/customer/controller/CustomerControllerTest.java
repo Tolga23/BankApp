@@ -40,7 +40,6 @@ class CustomerControllerTest extends BaseTest {
     @Test
     void shouldFindAll() throws Exception {
 
-
         MvcResult mvcResult = mockMvc.perform(get(BASE_PATH)
                 .content("")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -62,9 +61,9 @@ class CustomerControllerTest extends BaseTest {
 //                "}";
 
         CustomerSaveRequestDto customerSaveRequestDto = CustomerSaveRequestDto.builder()
-                .name("test")
-                .surname("test")
-                .identityNo(12345678901L)
+                .name("TEEST1")
+                .surname("PR2")
+                .identityNo(15262342901L)
                 .password("test")
                 .build();
 
@@ -84,8 +83,8 @@ class CustomerControllerTest extends BaseTest {
 
     @Test
     void shouldFindById() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get(BASE_PATH + "/1")
-                .content("1L")
+        MvcResult mvcResult = mockMvc.perform(get(BASE_PATH + "/2")
+                .content("2L")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn();
 
@@ -96,8 +95,8 @@ class CustomerControllerTest extends BaseTest {
 
     @Test
     void shouldDelete() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(delete(BASE_PATH + "/652")
-                .content("652L")
+        MvcResult mvcResult = mockMvc.perform(delete(BASE_PATH + "/802")
+                .content("802L")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn();
 
@@ -110,7 +109,7 @@ class CustomerControllerTest extends BaseTest {
     void shouldUpdate() throws Exception {
 
         CustomerUpdateRequestDto customerUpdateRequestDto = CustomerUpdateRequestDto.builder()
-                .id(802L)
+                .id(852L)
                 .name("LETHAL")
                 .surname("ROSSH")
                 .identityNo(6783456345L)

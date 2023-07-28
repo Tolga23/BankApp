@@ -154,7 +154,7 @@ class CustomerServiceTest {
 
     @Test
     void shouldUpdate() {
-        Long id = 1L;
+        Long id = 52L;
 
         CustomerUpdateRequestDto customerUpdateRequestDto = mock(CustomerUpdateRequestDto.class);
         when(customerUpdateRequestDto.getId()).thenReturn(id);
