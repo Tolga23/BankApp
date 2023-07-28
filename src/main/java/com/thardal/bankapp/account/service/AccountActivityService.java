@@ -9,6 +9,7 @@ import com.thardal.bankapp.account.enums.AccountActivityType;
 import com.thardal.bankapp.account.enums.AccountErrorMessage;
 import com.thardal.bankapp.account.service.entityservice.AccountActivityEntityService;
 import com.thardal.bankapp.account.service.entityservice.AccountEntityService;
+import com.thardal.bankapp.global.enums.GlobalErrorMessages;
 import com.thardal.bankapp.global.exceptions.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class AccountActivityService {
     private final AccountEntityService accountEntityService;
 
     public AccountActivityDto withdraw(AccountMoneyActivityDto accountMoneyActivityDto) {
+
+        validateAccountMoneyActivityDto(accountMoneyActivityDto);
 
         Long accountId = accountMoneyActivityDto.getAccountId();
         BigDecimal amount = accountMoneyActivityDto.getAmount();
@@ -66,7 +69,11 @@ public class AccountActivityService {
         return accountActivity;
     }
 
-    private static void validateBalance(BigDecimal remainingBalance) {
+    private void validateAccountMoneyActivityDto(AccountMoneyActivityDto accountMoneyActivityDto) {
+        if (accountMoneyActivityDto == null) throw new BusinessException(GlobalErrorMessages.PARAMETER_CANNOT_BE_NULL);
+    }
+
+    private void validateBalance(BigDecimal remainingBalance) {
         if (remainingBalance.compareTo(BigDecimal.ZERO) < 0) throw new BusinessException(AccountErrorMessage.INSUFFICIENT_BALANCE);
     }
 
