@@ -54,8 +54,8 @@ public class AccountController {
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity withdraw(@RequestBody AccountMoneyActivityDto accountMoneyActivityDto){
-        AccountActivityDto withdraw = accountActivityService.withdraw(accountMoneyActivityDto);
+    public ResponseEntity withdraw(@RequestBody AccountMoneyActivityRequestDto accountMoneyActivityRequestDto){
+        AccountActivityDto withdraw = accountActivityService.withdraw(accountMoneyActivityRequestDto);
 
         return ResponseEntity.ok(RestResponse.of(withdraw));
     }
