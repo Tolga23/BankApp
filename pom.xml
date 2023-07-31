@@ -98,6 +98,11 @@
 		</dependency>
 		<!-- END - Handler dispatch failed -->
 
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
