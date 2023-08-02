@@ -1,12 +1,16 @@
 package com.thardal.bankapp.kafka.dto;
 
-import lombok.Data;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class KafkaMessage {
     private Long id;
     private String message;
-    private LocalDateTime dateTime;
+    private String description;
+    private Date dateTime;
 }
