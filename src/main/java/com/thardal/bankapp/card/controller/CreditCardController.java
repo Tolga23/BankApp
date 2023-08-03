@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/credit-card")
@@ -69,8 +70,11 @@ public class CreditCardController {
     @GetMapping("/{id}/activities")
     public ResponseEntity findAllActivities(@PathVariable Long id,
                                             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
-                                            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
-        List<CreditCardActivityDto> creditCardActivityDtoList = creditCardService.findAllActivities(id, startDate, endDate);
+                                            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate,
+                                            Optional<Integer> pageOptional,
+                                            Optional<Integer> sizeOptional) {
+        List<CreditCardActivityDto> creditCardActivityDtoList = creditCardService.findAllActivities(id, startDate, endDate,
+                pageOptional, sizeOptional);
 
         return ResponseEntity.ok(RestResponse.of(creditCardActivityDtoList));
     }

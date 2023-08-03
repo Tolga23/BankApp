@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -304,6 +305,17 @@ public class CreditCardService {
 
     public List<CreditCardActivityDto> findAllActivities(Long id, Date startDate, Date endDate) {
         List<CreditCardActivity> creditCardActivityList = creditCardActivityEntityService.findAllByCreditCardIdAndTransactionDateBetween(id, startDate, endDate);
+        List<CreditCardActivityDto> creditCardActivityDtoList = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDtoList(creditCardActivityList);
+
+        return creditCardActivityDtoList;
+    }
+
+    public List<CreditCardActivityDto> findAllActivities(Long id, Date startDate, Date endDate,
+                                                         Optional<Integer> pageOptional,
+                                                         Optional<Integer> sizeOptional) {
+
+        List<CreditCardActivity> creditCardActivityList = creditCardActivityEntityService
+                .findAllByCreditCardIdAndTransactionDateBetween(id, startDate, endDate, pageOptional, sizeOptional);
         List<CreditCardActivityDto> creditCardActivityDtoList = CreditCardActivityMapper.INSTANCE.convertToCreditCardActivityDtoList(creditCardActivityList);
 
         return creditCardActivityDtoList;

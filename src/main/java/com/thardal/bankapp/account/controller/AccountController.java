@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/account")
@@ -19,8 +20,8 @@ public class AccountController {
     private final MoneyTransferService moneyTransferService;
     private final AccountActivityService accountActivityService;
     @GetMapping
-    public ResponseEntity findAll(){
-        List<AccountDto> accountDtoList = accountService.findAll();
+    public ResponseEntity findAll(Optional<Integer> pageOptional, Optional<Integer> sizeOptional){
+        List<AccountDto> accountDtoList = accountService.findAll(pageOptional, sizeOptional);
 
         return ResponseEntity.ok(RestResponse.of(accountDtoList));
     }

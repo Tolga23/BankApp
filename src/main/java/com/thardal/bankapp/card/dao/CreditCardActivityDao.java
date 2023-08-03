@@ -1,6 +1,8 @@
 package com.thardal.bankapp.card.dao;
 
 import com.thardal.bankapp.card.entity.CreditCardActivity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +13,7 @@ import java.util.List;
 public interface CreditCardActivityDao extends JpaRepository<CreditCardActivity,Long> {
 
     List<CreditCardActivity> findAllByCreditCardIdAndTransactionDateBetween(Long creditCardId, Date startDate, Date endDate);
+
+    Page<CreditCardActivity> findAllByCreditCardIdAndTransactionDateBetween(Long creditCardId, Date startDate, Date endDate, Pageable pageable);
 
 }

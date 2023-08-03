@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,15 @@ public class AccountService {
 
 
     public List<AccountDto> findAll() {
-        List<Account> accountList = accountEntityService.findAllActiveAccountList(GlobalStatusType.ACTIVE);
+        List<Account> accountList = accountEntityService.findAllActiveAccountList();
+
+        List<AccountDto> accountDtoList = AccountMapper.INSTANCE.convertToAccountDtoList(accountList);
+
+        return accountDtoList;
+    }
+
+    public List<AccountDto> findAll(Optional<Integer> pageOptional, Optional<Integer> sizeOptional) {
+        List<Account> accountList = accountEntityService.findAllActiveAccountList(pageOptional, sizeOptional);
 
         List<AccountDto> accountDtoList = AccountMapper.INSTANCE.convertToAccountDtoList(accountList);
 
