@@ -8,6 +8,7 @@ import com.thardal.bankapp.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
@@ -16,6 +17,9 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepository<E, Long>> {
+
+    private static final Integer DEFAULT_PAGE = 0;
+    private static final Integer DEFAULT_SIZE = 10;
 
     private final D dao;
     private AuthenticationService authenticationService;
@@ -91,5 +95,29 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
         return dao;
     }
 
+    protected PageRequest getPageRequest(Optional<Integer> pageOptional, Optional<Integer> sizeOptional) {
+        Integer page = getPage(pageOptional);
+
+        Integer size = getSize(sizeOptional);
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return pageRequest;
+    }
+
+    protected Integer getSize(Optional<Integer> sizeOptional) {
+        Integer size = DEFAULT_SIZE;
+        if (sizeOptional.isPresent()) {
+            size = sizeOptional.get();
+        }
+        return size;
+    }
+
+    protected Integer getPage(Optional<Integer> pageOptional) {
+        Integer page = DEFAULT_PAGE;
+        if (pageOptional.isPresent()) {
+            page = pageOptional.get();
+        }
+        return page;
+    }
 
 }
